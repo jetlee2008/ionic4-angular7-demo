@@ -1,20 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
+import * as Common from 'yafeya-system-common';
+import { Hero } from './models/hero';
+import { HeroService } from './services/hero-service.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    private heroService: HeroService,
+    @Inject(Common.LoggerFactoryToken)
+    private loggerFactory: Common.ILoggerFactory
   ) {
+    this.loggerFactory.AddDebug();
     this.initializeApp();
+  }
+
+  async ngOnInit() {
+    await this.heroService.load();
+    this.removeInvalidHeroes();
+    this.initHeroesWhenEmpty();
   }
 
   initializeApp() {
@@ -22,5 +36,31 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
+  }
+
+  private initHeroesWhenEmpty() {
+    if (this.heroService.Heroes.IsEmpty()) {
+      let initHeros = [
+        new Hero('1', 'Captain America', 'Super Soldier'),
+        new Hero('2', 'Iron Man', 'Armor & Millionare'),
+        new Hero('3', 'Thor', 'God with Thunder'),
+        new Hero('4', 'Hulk', 'Smash everything'),
+        new Hero('5', 'Halk Eye', 'Arrow Sniper'),
+        new Hero('6', 'Black Widow', 'Expert of fighting & interrogating')
+      ];
+      this.heroService.addHeros(initHeros);
+    }
+  }
+
+  private removeInvalidHeroes() {
+    let invalidHeroes: Common.List<Hero> = new Common.List<Hero>();
+    for (let hero of this.heroService.Heroes) {
+      if (!hero.Id) {
+        invalidHeroes.Add(hero);
+      }
+    }
+    for (let invalidHero of invalidHeroes) {
+      this.heroService.deleteHero(invalidHero);
+    }
   }
 }
