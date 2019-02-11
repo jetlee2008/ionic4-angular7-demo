@@ -58,4 +58,13 @@ export class HeroListPage implements OnInit {
     };
     this.navCtrl.navigateForward(url, options);
   }
+
+  directToScanner() {
+    let url = `/qr-scanner`;
+    let options: NavigationOptions = {
+      animated: true,
+      animationDirection: 'forward'
+    };
+    this.navCtrl.navigateForward(url, options);
+  }
 }

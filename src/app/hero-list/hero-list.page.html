@@ -4,6 +4,9 @@
       Heroes
     </ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="directToScanner()">
+        <ion-icon slot="icon-only" name="camera"></ion-icon>
+      </ion-button>
       <ion-button (click)="addHero()">
         <ion-icon slot="icon-only" name="clipboard"></ion-icon>
       </ion-button>
@@ -12,11 +15,14 @@
 </ion-header>
 
 <ion-content>
-
   <ion-list>
-    <ion-item button detail *ngFor="let hero of heroService.Heroes" (click)="directToDetail(hero)">
+    <ion-item
+      button
+      detail
+      *ngFor="let hero of heroService.Heroes"
+      (click)="directToDetail(hero)"
+    >
       <ion-label>{{ hero.Name }}</ion-label>
     </ion-item>
   </ion-list>
-
 </ion-content>
